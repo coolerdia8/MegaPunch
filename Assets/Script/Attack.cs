@@ -1,12 +1,36 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+//using UnityEngine.Experimental.UIElements;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;//クラス名の上に追加してください
 
 
 public class Attack : MonoBehaviour
 {
     string sceneName;
+    public bool PunchPowerFlag = false;
+    float punchbreakValue = 70f;
+
+    // PowerMeterオブジェクトへの参照
+    [SerializeField]
+    GameObject powerMeterObject;
+
+    // Sliderコンポーネントへの参照
+    public Slider powerMeterSlider;
+
+    // メーターの速さ
+    [SerializeField]
+    float meterSpeed = 0.2f;
+
+    // メーターが最大値になった時のディレイ
+    [SerializeField]
+    float delayTime = 0.08f;
+    float waitTime = 0f;
+
+    // メーターが増加中か減少中か(trueで増加中)
+    bool isMeterIncreasing = true;
+
+    // 加える力の大きさ
+    float PunchPower = 0f;
 
     //PlayerのAnimatorコンポーネント保存用
     private Animator animator;
@@ -25,6 +49,8 @@ public class Attack : MonoBehaviour
         //PlayerのAnimatorコンポーネントを取得する
         animator = GetComponent<Animator>();
 
+        powerMeterSlider = powerMeterObject.GetComponent<Slider>();
+
         //左手のコライダーを取得
         LhandCollider = GameObject.Find("Character1_LeftHand").GetComponent<SphereCollider>();
         //右手のコライダーを取得
@@ -37,6 +63,8 @@ public class Attack : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // powerMeterを動かす
+        MovePowerMeter();
 
         //Aを押すとjab
         if (Input.GetKeyDown(KeyCode.A))
@@ -81,6 +109,48 @@ public class Attack : MonoBehaviour
         {
             animator.SetBool("DamageDown", true);
         }
+    }
+
+    public bool BlockWarijudge()
+    {
+        if (PunchPower >= punchbreakValue)
+        {
+            PunchPowerFlag = true;
+        }
+        return PunchPowerFlag;
+    }
+
+    void MovePowerMeter()
+    {
+        // 飛行中フラグがfalseの時にメーターを上下させる
+        //if (isFlying)
+        //{
+        //    return;
+        //}
+
+        // 境界値の定義
+        float boundaryValue = 0f;
+
+        // PunchPowerにmeterSpeedの値を加えていってメーターを上下させる
+        if (isMeterIncreasing)
+        {
+            powerMeterSlider.value += meterSpeed;
+            boundaryValue = powerMeterSlider.maxValue;
+        }
+        else
+        {
+            powerMeterSlider.value -= meterSpeed;
+            boundaryValue = powerMeterSlider.minValue;
+        }
+
+        // 境界値になったら少し止めた後にメーターを逆向きに動かす
+        //if (Mathf.Approximately(powerMeterSlider.value, boundaryValue))
+        //{
+        //    WaitAtBoundaryValue();
+        //}
+
+        // スライダーの現在値をforceMagnitudeに格納
+        PunchPower = powerMeterSlider.value;
     }
 
     public void OnPressedMegaPunchButton()
