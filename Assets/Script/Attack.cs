@@ -70,18 +70,28 @@ public class Attack : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            animator.SetBool("Land", true);
-            //右手コライダーをオンにする
-            RhandCollider.enabled = true;
-
-            //一定時間後にコライダーの機能をオフにする
-            Invoke("ColliderReset", 0.3f);
+            EarthWari();
         }
 
         if (Input.GetKeyDown(KeyCode.Z))
         {
             animator.SetBool("DamageDown", true);
         }
+    }
+
+    public void OnPressedMegaPunchButton()
+    {
+        EarthWari();
+    }
+
+    public void EarthWari()
+    {
+        animator.SetBool("Land", true);
+        //右手コライダーをオンにする
+        RhandCollider.enabled = true;
+
+        //一定時間後にコライダーの機能をオフにする
+        Invoke("ColliderReset", 0.3f);
     }
 
     private void ColliderReset()
