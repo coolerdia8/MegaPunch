@@ -1,9 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;//クラス名の上に追加してください
+
 
 public class Attack : MonoBehaviour
 {
+    string sceneName;
 
     //PlayerのAnimatorコンポーネント保存用
     private Animator animator;
@@ -18,6 +21,7 @@ public class Attack : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        sceneName = SceneManager.GetActiveScene().name;
         //PlayerのAnimatorコンポーネントを取得する
         animator = GetComponent<Animator>();
 
@@ -84,6 +88,11 @@ public class Attack : MonoBehaviour
         EarthWari();
     }
 
+    public void RetryButton()
+    {
+        SceneManager.LoadScene(sceneName);
+    }
+
     public void EarthWari()
     {
         animator.SetBool("Land", true);
@@ -91,7 +100,7 @@ public class Attack : MonoBehaviour
         RhandCollider.enabled = true;
 
         //一定時間後にコライダーの機能をオフにする
-        Invoke("ColliderReset", 0.3f);
+        Invoke("ColliderReset", 1.5f);
     }
 
     private void ColliderReset()
