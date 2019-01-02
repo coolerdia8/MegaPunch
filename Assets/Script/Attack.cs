@@ -9,7 +9,9 @@ public class Attack : MonoBehaviour
     private Animator animator;
 
     //左手のコライダー
-    private Collider handCollider;
+    private Collider LhandCollider;
+    //右手のコライダー
+    private Collider RhandCollider;
     //右足のコライダー
     private Collider footCollider;
 
@@ -20,7 +22,9 @@ public class Attack : MonoBehaviour
         animator = GetComponent<Animator>();
 
         //左手のコライダーを取得
-        handCollider = GameObject.Find("Character1_LeftHand").GetComponent<SphereCollider>();
+        LhandCollider = GameObject.Find("Character1_LeftHand").GetComponent<SphereCollider>();
+        //右手のコライダーを取得
+        RhandCollider = GameObject.Find("Character1_RightHand").GetComponent<SphereCollider>();
         //右足のコライダーを取得
         footCollider = GameObject.Find("Character1_RightToeBase").GetComponent<SphereCollider>();
 
@@ -36,7 +40,7 @@ public class Attack : MonoBehaviour
             animator.SetBool("Jab", true);
 
             //左手コライダーをオンにする
-            handCollider.enabled = true;
+            LhandCollider.enabled = true;
 
             //一定時間後にコライダーの機能をオフにする
             Invoke("ColliderReset", 0.3f);
@@ -67,6 +71,11 @@ public class Attack : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Q))
         {
             animator.SetBool("Land", true);
+            //右手コライダーをオンにする
+            RhandCollider.enabled = true;
+
+            //一定時間後にコライダーの機能をオフにする
+            Invoke("ColliderReset", 0.3f);
         }
 
         if (Input.GetKeyDown(KeyCode.Z))
@@ -77,7 +86,8 @@ public class Attack : MonoBehaviour
 
     private void ColliderReset()
     {
-        handCollider.enabled = false;
+        LhandCollider.enabled = false;
+        RhandCollider.enabled = false;
         footCollider.enabled = false;
     }
 }
