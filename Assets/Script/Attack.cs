@@ -9,6 +9,7 @@ public class Attack : MonoBehaviour
     string sceneName;
     public float PunchPower = 0f;
     public bool PunchPowerFlag = false;
+    public bool isPunch = false;
     float punchbreakValue = 70f;
 
     //外部読み出し用
@@ -83,11 +84,11 @@ public class Attack : MonoBehaviour
 
     void MovePowerMeter()
     {
-        // 飛行中フラグがfalseの時にメーターを上下させる
-        //if (isFlying)
-        //{
-        //    return;
-        //}
+        // Punchフラグがfalseの時にメーターを上下させる
+        if (isPunch)
+        {
+            return;
+        }
 
         // 境界値の定義
         float boundaryValue = 0f;
@@ -129,6 +130,7 @@ public class Attack : MonoBehaviour
 
     public void OnPressedMegaPunchButton()
     {
+        isPunch = true;
         PunchPower = forceMagnitude;
         EarthWari();
     }
@@ -146,6 +148,8 @@ public class Attack : MonoBehaviour
 
         //一定時間後にコライダーの機能をオフにする
         Invoke("ColliderReset", 1.5f);
+
+
     }
 
     private void ColliderReset()
@@ -153,5 +157,6 @@ public class Attack : MonoBehaviour
         LhandCollider.enabled = false;
         RhandCollider.enabled = false;
         footCollider.enabled = false;
+        isPunch = false;
     }
 }
