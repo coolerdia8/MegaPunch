@@ -7,8 +7,12 @@ using UnityEngine.SceneManagement;//クラス名の上に追加してくださ�
 public class Attack : MonoBehaviour
 {
     string sceneName;
+    public float PunchPower = 0f;
     public bool PunchPowerFlag = false;
     float punchbreakValue = 70f;
+
+    //外部読み出し用
+    public static Attack main;
 
     // PowerMeterオブジェクトへの参照
     [SerializeField]
@@ -30,7 +34,7 @@ public class Attack : MonoBehaviour
     bool isMeterIncreasing = true;
 
     // 加える力の大きさ
-    float PunchPower = 0f;
+    float forceMagnitude = 0f;
 
     //PlayerのAnimatorコンポーネント保存用
     private Animator animator;
@@ -45,6 +49,7 @@ public class Attack : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        main = this;
         sceneName = SceneManager.GetActiveScene().name;
         //PlayerのAnimatorコンポーネントを取得する
         animator = GetComponent<Animator>();
@@ -65,50 +70,6 @@ public class Attack : MonoBehaviour
     {
         // powerMeterを動かす
         MovePowerMeter();
-
-        //Aを押すとjab
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            animator.SetBool("Jab", true);
-
-            //左手コライダーをオンにする
-            LhandCollider.enabled = true;
-
-            //一定時間後にコライダーの機能をオフにする
-            Invoke("ColliderReset", 0.3f);
-        }
-
-        //Sを押すとHikick
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            animator.SetBool("Hikick", true);
-            //右足コライダーをオンにする
-            footCollider.enabled = true;
-
-            //一定時間後にコライダーの機能をオフにする
-            Invoke("ColliderReset", 1.5f);
-        }
-
-        //Dを押すとSpinkick
-        if (Input.GetKeyDown(KeyCode.D))
-        {
-            animator.SetBool("Spinkick", true);
-            //右足コライダーをオンにする
-            footCollider.enabled = true;
-
-            //一定時間後にコライダーの機能をオフにする
-            Invoke("ColliderReset", 1.5f);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            EarthWari();
-        }
-
-        if (Input.GetKeyDown(KeyCode.Z))
-        {
-            animator.SetBool("DamageDown", true);
-        }
     }
 
     public bool BlockWarijudge()
@@ -144,17 +105,31 @@ public class Attack : MonoBehaviour
         }
 
         // 境界値になったら少し止めた後にメーターを逆向きに動かす
-        //if (Mathf.Approximately(powerMeterSlider.value, boundaryValue))
-        //{
-        //    WaitAtBoundaryValue();
-        //}
+        if (Mathf.Approximately(powerMeterSlider.value, boundaryValue))
+        {
+            WaitAtBoundaryValue();
+        }
 
         // スライダーの現在値をforceMagnitudeに格納
-        PunchPower = powerMeterSlider.value;
+        forceMagnitude = powerMeterSlider.value;
+    }
+
+    void WaitAtBoundaryValue()
+    {
+        // 前のフレームが呼ばれて、処理が完了するまでにかかった時間を加算
+        waitTime += Time.deltaTime;
+
+        // waitTimeがdelayTimeを超えたら増加フラグの反転
+        if (waitTime >= delayTime)
+        {
+            isMeterIncreasing = !isMeterIncreasing;
+            waitTime = 0f;
+        }
     }
 
     public void OnPressedMegaPunchButton()
     {
+        PunchPower = forceMagnitude;
         EarthWari();
     }
 
