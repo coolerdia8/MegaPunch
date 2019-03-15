@@ -10,7 +10,7 @@ public class Attack : MonoBehaviour
     public float PunchPower = 0f;
     public bool PunchPowerFlag = false;
     public bool isPunch = false;
-    float punchbreakValue = 70f;
+    float punchbreakValue = 98f;
 
     //外部読み出し用
     public static Attack main;
